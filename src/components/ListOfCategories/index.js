@@ -1,62 +1,54 @@
-import React, { Fragment, useEffect, useState } from "react";
-import { Category } from "../Category/Category";
-import { List, Item } from "./styles";
+import React, { Fragment, useEffect, useState } from 'react'
+import { Category } from '../Category'
+
+import { List, Item } from './styles'
+
+function useCategoriesData () {
+  const [categories, setCategories] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  useEffect(function () {
+    setLoading(true)
+    window.fetch('https://petgram-server.midudev.now.sh/categories')
+      .then(res => res.json())
+      .then(response => {
+        setCategories(response)
+        setLoading(false)
+      })
+  }, [])
+
+  return { categories, loading }
+}
 
 export const ListOfCategories = () => {
+  const { categories, loading } = useCategoriesData()
+  const [showFixed, setShowFixed] = useState(false)
 
-  /* setear el estado inicial */
-  const [categories, setCategories] = useState([]);
-  const [showFixed, setShowFixed] = useState(false);
-
-  /* useEffect se ejecuta cada vez que se renderiza el componente */
-
-  /* useEffect para obtener los datos del API */
   useEffect(function () {
-    window
-      .fetch("http://localhost:3000/categories")
-      .then((res) => res.json())
-      .then((response) => {
-        setCategories(response);
-      });
-  }, []);
-
-
-  /* useEffect para mostrar las categorias cuando el scroll baje */
-  useEffect(function () {
-
-    /* Función onScroll para verificar el movimiento del scroll */
     const onScroll = e => {
-      /* si el scroll  es en Y es mayor a 200 entones newShowFixed == true */
       const newShowFixed = window.scrollY > 200
-
-      /* si el */
       showFixed !== newShowFixed && setShowFixed(newShowFixed)
     }
 
-    /* Escuchar el movimiento del scroll, se suscribe un evento. */
     document.addEventListener('scroll', onScroll)
-    console.log(showFixed);
 
-    /* cuando se desmonta el componente se elimina la suscripción al evento */
     return () => document.removeEventListener('scroll', onScroll)
-
   }, [showFixed])
-
 
   const renderList = (fixed) => (
     <List fixed={fixed}>
-      {categories.map((category) => (
-        <Item key={category.id}>
-          <Category {...category} />
-        </Item>
-      ))}
+      {
+        loading
+          ? <Item key='loading'><Category /></Item>
+          : categories.map(category => <Item key={category.id}><Category {...category} /></Item>)
+      }
     </List>
   )
+
   return (
     <Fragment>
       {renderList()}
       {showFixed && renderList(true)}
     </Fragment>
-
-  );
-};
+  )
+}
