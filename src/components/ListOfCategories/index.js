@@ -3,9 +3,7 @@ import { Category } from '../Category'
 
 import { List, Item } from './styles'
 
-// Costum Hook
 function useCategoriesData () {
-  // Creando estados iniciales.
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(false)
 
@@ -19,17 +17,12 @@ function useCategoriesData () {
       })
   }, [])
 
-
   return { categories, loading }
 }
 
 export const ListOfCategories = () => {
-
-  // Obtener los valores de los estados en en el custom hook
   const { categories, loading } = useCategoriesData()
-  
   const [showFixed, setShowFixed] = useState(false)
-
 
   useEffect(function () {
     const onScroll = e => {
