@@ -24,4 +24,5 @@ yarn-error.log*
 
 package-lock.json
 node_modules/
-api/node_modules/
+api/node_modules/*
+/api/node_modules/*
